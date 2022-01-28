@@ -1,10 +1,16 @@
 const apiKey = 'f778c165f85a42a0b73e0877131f2edb';
 const container = document.querySelector('.news');
+const search_btn = document.querySelector('#btn_search');
+const search_country = document.querySelector('#search_country');
+const search_topic = document.querySelector('#search_topic');
 
-
-
-async function getNews(api) {
-    const response = await fetch(`https://newsapi.org/v2/top-headlines?country=ru&apiKey=${api}`);
+async function getNews(api, country = "ru", topic = null) {
+    let response;
+    if (topic === null) {
+        response = await fetch(`https://newsapi.org/v2/top-headlines?country=${country}&apiKey=${api}`);
+    }else {
+        response = await fetch(`https://newsapi.org/v2/everything?q=${topic}&apiKey=${api}`)
+    }
     const requestValue = response.json();
     requestValue.then(data => showNews(data));
 }
@@ -49,5 +55,17 @@ function showNews(responseData) {
         
     });
 }
+
+search_btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const country = search_country.value;
+    const topic = search_topic.value;
+
+    if (topic) {
+        getNews(apiKey, country ,topic);
+    }else {
+        getNews(apiKey, country);
+    }
+})
 
 getNews(apiKey);
